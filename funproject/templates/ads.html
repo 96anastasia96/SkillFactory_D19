@@ -1,0 +1,41 @@
+{% extends 'flatpages/default.html' %}
+
+{% block title %}
+Announcements
+{% endblock title %}
+
+
+{% block content %}
+<h1><b> All announcements </b></h1>
+
+
+
+<hr>
+
+
+
+    {% if announcement %}
+        <table>
+            <tr>
+                <td> Title</td>
+                <td> Date added </td>
+                <td> Text </td>
+            </tr>
+            {% for announcement in ads %}
+
+            <tr>
+                <td> {{ announcement.title }}</td>
+                <td> {{ announcement.text|truncatewords:15 }} </td>
+                <td> {{ announcement.category }} </td>
+
+            </tr>
+            {% endfor %}
+        </table>
+
+    {% else %}
+        <h2> No announcements </h2>
+    {% endif %}
+
+
+
+{% endblock content %}
