@@ -120,9 +120,8 @@ class AdCreate(CreateView):
     success_url = '/ads/'
 
     def form_valid(self, form):
-        form.instance.user = self.request.user
+        form.instance.author = self.request.user # автором станет текущий пользователь
         return super().form_valid(form)
-
 
 class AdUpdate(UpdateView):
     model = Announcement
