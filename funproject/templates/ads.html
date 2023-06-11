@@ -21,6 +21,10 @@ Announcements
       <th>Category</th>
       <th>Image</th>
       <th>Video</th>
+      <th> Likes </th>
+      <th> Like/Unlike </th>
+      <th> Manage </th>
+
     </tr>
   </thead>
   <tbody>
@@ -40,19 +44,20 @@ Announcements
             <video controls style="max-width: 200px;">
               <source src="{{ announcement.video.url }}" type="{{ announcement.video.content_type }}">
             </video>
-          {% endif %}
-        <td>{{ announcement.likes_number }} Likes
-
-        {% if user in announcement.likes.all %}
+          {% endif %} </td>
+        <td>{{ announcement.likes_number }} Likes </td>
+        <td>
+          {% if user in announcement.likes.all %}
         <a href ="{% url 'ad_like' announcement.id%}"> Unlike</a>
         {% else %}
         <a href ="{% url 'ad_like' announcement.id%}"> Like</a>
-        {% if user.is_authenticated %}
+        </td>
+        <td>
               {% if user.id == ad.author.id %}
                   <small><a href="{% url 'ad_edit' announcement.pk %}"> Edit </a></small>
-                  <small> <a href="{% url 'ad_delete' announcement.pk %}"> Delete</a> </small> </td>
+                  <small> <a href="{% url 'ad_delete' announcement.pk %}"> Delete</a> </small>
               {% endif %}
-        {% endif %}
+        </td>
 
         {% endif %}
       </tr>
