@@ -1,12 +1,13 @@
+import values as values
 from django.contrib import messages
 from django.core.mail import message
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404, redirect
-from django.urls import reverse
+from django.urls import reverse, reverse_lazy
 from django.views.generic import (ListView, DetailView, CreateView, UpdateView, DeleteView)
-
 from .forms import AnnouncementForm, CommentForm
-from .models import Announcement, Category, Comment, Profile
+from .models import Announcement, Comment, Profile
+
 # Create your views here.
 
 
@@ -86,8 +87,8 @@ class AdView(DetailView):
             ad = self.get_object()
             form.instance.user = request.user
             form.instance.announcement = ad
-            form.save()
-
+            comment = form.save()
+            request.user.profile.comments.add(comment)
             return redirect(reverse("ad", kwargs={
                 'pk': ad.pk
             }))
@@ -95,6 +96,8 @@ class AdView(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["form"] = self.form
+        comments = Comment.objects.filter(announcement__author=self.request.user, announcement=self.get_object())
+        context["comments"] = comments
         return context
 
     def add_ad(request):
@@ -123,12 +126,17 @@ class AdCreate(CreateView):
         form.instance.author = self.request.user # автором станет текущий пользователь
         return super().form_valid(form)
 
+
 class AdUpdate(UpdateView):
     model = Announcement
+    template_name = 'edit_ad.html'
+    fields = ['title', 'text', 'category', 'image', 'video']
 
 
 class AdDelete(DeleteView):
     model = Announcement
+    template_name = 'delete_ad.html'
+    success_url = reverse_lazy('ads')
 
 
 def ad_like(request, pk):

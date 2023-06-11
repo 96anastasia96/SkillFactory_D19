@@ -1,6 +1,6 @@
 from django.urls import path
 from . import views
-from .views import (AdList, AdCreate, AdView, CommentView, profile_list, home)
+from .views import (AdList, AdCreate, AdView, CommentView, home, AdUpdate, AdDelete)
 
 urlpatterns = [
     path('ads/', AdList.as_view(), name='ads'),
@@ -11,5 +11,7 @@ urlpatterns = [
     path('profile_list/', views.profile_list, name='profile_list'),
     path('home/', home, name='home'),
     path('profile/<int:pk>', views.profile, name='profile'),
+    path('ad/edit/<int:pk>/', AdUpdate.as_view(), name='ad_edit'),
+    path('ad/delete/<int:pk>/', AdDelete.as_view(), name='ad_delete'),
 
 ]
