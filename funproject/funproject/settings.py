@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites',
     'fun',
     'sign',
     'protect',
@@ -45,6 +46,7 @@ INSTALLED_APPS = [
     'allauth.socialaccount',
     'allauth.socialaccount.providers.google',
 ]
+
 
 SITE_ID = 1
 
@@ -114,7 +116,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Europe/Moscow'
 
 USE_I18N = True
 
@@ -143,15 +145,19 @@ AUTHENTICATION_BACKENDS = [
 ACCOUNT_EMAIL_REQUIRED = False
 ACCOUNT_UNIQUE_EMAIL = True
 ACCOUNT_USERNAME_REQUIRED = True
-#ACCOUNT_AUTHENTICATION_METHOD = ''
-#ACCOUNT_EMAIL_VERIFICATION = ''
+ACCOUNT_EMAIL_VERIFICATION = ''
 ACCOUNT_FORMS = {'signup': 'sign.models.CommonSignupForm'}
 
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 465
-EMAIL_HOST_USER = 'kissodessa'
+EMAIL_HOST_USER = 'kissodessa@gmail.com'
 EMAIL_HOST_PASSWORD = 'ykapkxrajftxajhc'
 EMAIL_USE_SSL = True
+EMAIL_USE_TLS = False
+
+
 ADMINS = [
     # список всех админов в формате ('имя', 'их почта')
     ('Anastasia', 'kissodessa@gmail.com'),
@@ -160,7 +166,7 @@ ADMINS = [
 MANAGERS = [
     # список менеджеров
     ('Anastasia3', 'su8scriber@yandex.ru'),
-    ('Anastasia4', 'su8scriber@gmail.com'),
+    ('Anastasia4', 'su8scriber1@gmail.com'),
 ]
 
 SERVER_EMAIL = 'kissodessa@gmail.com'

@@ -1,7 +1,18 @@
 from django.contrib.auth.models import User
 from django.db import models
 from django.db.models.signals import post_save
+
 # Create your models here.
+
+
+class Comment(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    date = models.DateTimeField(auto_now_add=True)
+    announcement = models.ForeignKey('Announcement', on_delete=models.CASCADE)
+    content = models.TextField()
+
+    def __str__(self):
+        return self.user.username
 
 
 class Profile(models.Model):
@@ -11,6 +22,9 @@ class Profile(models.Model):
                                      symmetrical=False,
                                      blank=True)
     date_modified = models.DateTimeField(User, auto_now=True)
+    comments = models.ManyToManyField(Comment,
+                                       related_name="commented_by",
+                                       blank=True)
 
     def __str__(self):
         return self.user.username
@@ -38,15 +52,6 @@ class Category(models.Model):
     def __str__(self):
         return f'{self.name.title()}'
 
-
-class Comment(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    date = models.DateTimeField(auto_now_add=True)
-    announcement = models.ForeignKey('Announcement', on_delete=models.CASCADE)
-    content = models.TextField()
-
-    def __str__(self):
-        return self.user.username
 
 
 class Announcement(models.Model):

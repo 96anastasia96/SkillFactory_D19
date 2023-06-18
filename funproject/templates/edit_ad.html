@@ -1,9 +1,9 @@
 {% extends 'flatpages/default.html' %}
 
 {% block content %}
-
 {% if user.is_authenticated %}
-    {% if user.id == ad.author.id %}
+
+    {% if user.id == announcement.author.id %}
 
         <h1>Edit an announcement</h1>
         <hr>
@@ -14,10 +14,12 @@
             <button type="submit" class="btn btn-primary">Update</button>
           </form>
         </div>
-        {% else %}
-            You are not allowed here!
-        {% endif %}
+    {% endif %}
+
+{% else %}
+  You are not allowed here!
 {% endif %}
+
 
         {% endblock %}
 

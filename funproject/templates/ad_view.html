@@ -12,11 +12,13 @@
     {% endif %}
 {% endif %}
 
-<h2><b><u>{{ ad.title}} </u></b></h2>
-<h4>{{ ad.date_added|date:'M d Y' }}</h4>
-<h4> By <a href="{% url 'profile' ad.author.id %}">@{{ ad.author|lower }}</a></h4>
-<h4>Category: {{ ad.category }}</h4>
-<h4>{{ ad.text }}</h4>
+<h3><b><u>{{ ad.title}} </u></b></h3>
+<small>{{ ad.date_added|date:'M d Y' }}</small>
+<br/>
+<small> By <a href="{% url 'profile' ad.author.id %}">@{{ ad.author|lower }}</a></small>
+<br/>
+<small>Category: {{ ad.category }}</small>
+<h5> <u> Содержание:</u> <br/> {{ ad.text }}</h5>
 {% if ad.image %}
   <img src="{{ ad.image.url }}" alt="{{ ad.image }}" style="max-width: 300px;" />
 {% endif %}

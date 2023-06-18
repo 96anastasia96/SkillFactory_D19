@@ -1,12 +1,15 @@
-import values as values
+from funproject import settings
 from django.contrib import messages
-from django.core.mail import message
+from django.core.mail import message, send_mail
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404, redirect
+from django.template.loader import render_to_string
 from django.urls import reverse, reverse_lazy
+from django.utils.html import strip_tags
 from django.views.generic import (ListView, DetailView, CreateView, UpdateView, DeleteView)
 from .forms import AnnouncementForm, CommentForm
 from .models import Announcement, Comment, Profile
+
 
 # Create your views here.
 
@@ -71,6 +74,7 @@ class CommentView(ListView):
         ad = Announcement.objects.all()
         context = {'comments': comments, 'ad': ad}
         return render(request, 'comments_list.html', context)
+
 
 
 class AdView(DetailView):
@@ -152,3 +156,5 @@ def ad_like(request, pk):
     else:
         message.success(request, ("You must be logged in"))
         return redirect('ads')
+
+

@@ -31,7 +31,7 @@ Announcements
     {% for announcement in ads %}
       <tr>
         <td>{{ announcement.date_added }}</td>
-        <td><a href="{% url 'ad' announcement.pk %}">{{ announcement.title|truncatechars:13 }}</a> </td>
+        <td><a href="{% url 'ad' announcement.pk %}">{{ announcement.title|truncatechars:30 }}</a> </td>
         <td>{{ announcement.text|truncatechars:15 }}</td>
         <td>{{ announcement.category }}</td>
         <td>
@@ -46,20 +46,20 @@ Announcements
             </video>
           {% endif %} </td>
         <td>{{ announcement.likes_number }} Likes </td>
-        <td>
-          {% if user in announcement.likes.all %}
-        <a href ="{% url 'ad_like' announcement.id%}"> Unlike</a>
-        {% else %}
-        <a href ="{% url 'ad_like' announcement.id%}"> Like</a>
-        </td>
-        <td>
-              {% if user.id == ad.author.id %}
+                  <td>
+                    {% if user in announcement.likes.all %}
+                  <a href ="{% url 'ad_like' announcement.id%}"> Unlike</a>
+                  {% else %}
+                  <a href ="{% url 'ad_like' announcement.id%}"> Like</a>
+                      {% endif %}   
+                  </td>
+              <td>
+              {% if user.id == announcement.author.id %}
                   <small><a href="{% url 'ad_edit' announcement.pk %}"> Edit </a></small>
                   <small> <a href="{% url 'ad_delete' announcement.pk %}"> Delete</a> </small>
               {% endif %}
-        </td>
+              </td>
 
-        {% endif %}
       </tr>
     {% endfor %}
   </tbody>
