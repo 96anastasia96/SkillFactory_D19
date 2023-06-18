@@ -8,6 +8,7 @@ class CommonSignupForm(SignupForm):
     class Meta:
         model = User
         fields = ("username",
+                  'email',
                   "password1",
                   "password2",)
 

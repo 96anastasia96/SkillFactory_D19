@@ -93,6 +93,19 @@ class AdView(DetailView):
             form.instance.announcement = ad
             comment = form.save()
             request.user.profile.comments.add(comment)
+
+            # отправка уведомления на почту
+            subject = f"Новый комментарий был добавлен к '{ad.title}'"
+            from_email = settings.DEFAULT_FROM_EMAIL
+            to_email = ad.author.email  # адрес получателя - автор объявления
+            context = {
+                'comment': comment,
+                'ad': ad,
+            }
+            html_message = render_to_string('new_comment_email.html', context)
+            plain_message = strip_tags(html_message)
+            send_mail(subject, plain_message, from_email, [to_email], html_message=html_message)
+
             return redirect(reverse("ad", kwargs={
                 'pk': ad.pk
             }))
