@@ -2,5 +2,12 @@
 
 {% block content %}
 
-Your code is {{ code }}
+<form method="POST">
+    {% csrf_token %}
+    <div>
+        <label for="code"> code: </label>
+        <input class="form-control" type="text" name="code">
+    </div>
+
+</form>
 {% endblock content %}

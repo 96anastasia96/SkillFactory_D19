@@ -15,15 +15,15 @@ def login_view(request):
         username = request.POST['username']
         password = request.POST['password']
 
-    return render(request, 'sign/login.html', {'error_message': error_message})
+    return render(request, 'sign/templates/login.html', {'error_message': error_message})
 
 
 
-class CommonSignupForm(CreateView):
+class CommonSignupFormView(CreateView):
     model = User
     form_class = CommonSignupForm
     success_url = '/'
-    template_name = 'sign/signup.html'
+    template_name = 'sign/templates/signup.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -40,13 +40,14 @@ class CommonSignupForm(CreateView):
 
 
 class GetCode(CreateView):
-    template_name = 'sign/code.html'
+    template_name = 'sign/templates/code.html'
 
     def get_context_data(self, **kwargs):
         name_user = self.kwargs.get('user')
         if not OneTimeCode.objects.filter(user=name_user).exists():
             code = ''.join(random.sample(hexdigits, 6))
-            OneTimeCode.objects.create(user=name_user, code=code)
+            one_time_code = OneTimeCode(user=name_user, code=code)
+            one_time_code.save()
             user = User.objects.get(username=name_user)
             send_mail(
                 subject=f'Код активации',
@@ -55,7 +56,6 @@ class GetCode(CreateView):
                 recipient_list=[user.email],
             )
 
-
     def post(self, request, *args, **kwargs):
         if 'code' in request.POST:
             user = request.path.split('/')[-1]
@@ -63,7 +63,7 @@ class GetCode(CreateView):
                 User.objects.filter(username=user).update(is_active=True)
                 OneTimeCode.objects.filter(code=request.POST['code'], user=user).delete()
             else:
-                return render(self.request, 'sign/invalid_code.html')
+                return render(self.request, 'sign/templates/invalid_code.html')
         return redirect('login')
 
 
