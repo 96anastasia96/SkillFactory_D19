@@ -1,6 +1,6 @@
 import random
 from string import hexdigits
-from django.contrib.auth import authenticate
+from allauth.account.views import LogoutView
 from django.contrib.auth.models import User
 from django.core.mail import send_mail
 from django.views.generic.edit import CreateView
@@ -43,8 +43,9 @@ class GetCode(CreateView):
     template_name = 'sign/templates/code.html'
 
     def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
         name_user = self.kwargs.get('user')
-        if not OneTimeCode.objects.filter(user=name_user).exists():
+        if not OneTimeCode.objects.filter(user=User.objects.get(username=name_user)).exists():
             code = ''.join(random.sample(hexdigits, 6))
             one_time_code = OneTimeCode(user=name_user, code=code)
             one_time_code.save()
@@ -55,15 +56,22 @@ class GetCode(CreateView):
                 from_email=settings.DEFAULT_FROM_EMAIL,
                 recipient_list=[user.email],
             )
+            context['message'] = "Код был отправлен на вашу почту."
+        return context
 
     def post(self, request, *args, **kwargs):
-        if 'code' in request.POST:
-            user = request.path.split('/')[-1]
-            if OneTimeCode.objects.filter(code=request.POST['code'], user=user).exists():
-                User.objects.filter(username=user).update(is_active=True)
-                OneTimeCode.objects.filter(code=request.POST['code'], user=user).delete()
-            else:
-                return render(self.request, 'sign/templates/invalid_code.html')
-        return redirect('login')
+        user = self.kwargs.get('user')
+        if OneTimeCode.objects.filter(code=request.POST['code'], user=user).exists():
+            User.objects.filter(username=user).update(is_active=True)
+            OneTimeCode.objects.filter(code=request.POST['code'], user=user).delete()
+            return redirect('login')
+        else:
+            return render(self.request, 'sign/templates/invalid_code.html')
 
 
+class InvalidCode(CreateView):
+    template_name = 'sign/templates/invalid_code.html'
+
+
+class LogoutViewCustom(LogoutView):
+    next_page = '/login/'
