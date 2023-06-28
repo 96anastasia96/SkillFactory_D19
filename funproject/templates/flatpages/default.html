@@ -25,6 +25,7 @@
            </button>
            <div class="collapse navbar-collapse" id="navbarResponsive">
                <ul class="navbar-nav ml-auto">
+                   {% if user.is_authenticated %}
                    <li class="nav-item active">
                        <a class="nav-link" href="/home/">Home
                            <span class="sr-only"></span>
@@ -39,16 +40,22 @@
                    <li class="nav-item">
                        <a class="nav-link" href="/profile_list/"> Profile List </a>
                    </li>
-                   {% if user.is_authenticated %}
                    <li class="nav-item">
                        <a class="nav-link" href="{% url 'profile' request.user.id %}"> My Profile </a>
+                   </li>
+                   <li class="nav-item">
+                       <a class="nav-link" href="/logout/">Logout</a>
+                   </li>
+                   {% else %}
+                   <li class="nav-item">
+                       <a class="nav-link" href="/login/"> Login </a>
+                   </li>
+                   <li class="nav-item">
+                       <a class="nav-link" href="/signup/"> Signup </a>
                    </li>
                    {% endif %}
                    <li class="nav-item">
                        <a class="nav-link" href="/admin/">Admin</a>
-                   </li>
-                   <li class="nav-item">
-                       <a class="nav-link" href="/logout/">Logout</a>
                    </li>
                </ul>
            </div>
