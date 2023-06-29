@@ -2,7 +2,7 @@
 
 {% block content %}
 
-<form action="{% url 'code' user=user %}" method="POST">
+<form method="POST">
     {% csrf_token %}
     <div>
         <label for="code"> Code: </label>
@@ -10,6 +10,8 @@
         <br/>
         <button type="submit" class="btn btn-secondary">Submit</button>
     </div>
-
 </form>
+{% for message in messages %}
+  <p>{{ message }}</p>
+{% endfor %}
 {% endblock content %}

@@ -1,9 +1,10 @@
 import random
-from string import digits
+import string
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
 from django.core.mail import send_mail
-from django.urls import reverse
 from django.views.generic.edit import CreateView
 from funproject import settings
 from .models import OneTimeCode
@@ -29,30 +30,13 @@ def login_view(request):
         return render(request, "sign/templates/login.html", {})
 
 
-def verify_code(request):
-    if request.method == "POST":
-        code = request.POST['code']
-        if OneTimeCode.objects.filter(code=code, user=request.user).exists() and request.user.is_active:  # Проверка активности пользователя
-            User.objects.filter(username=request.user.username).update(is_active=True)
-            OneTimeCode.objects.filter(code=code, user=request.user).delete()
-            messages.success(request, ("Code verification successful. You can now login."))
-            return redirect('login')
-        else:
-            messages.error(request, ("Invalid code or user is not active. Please try again."))
-            return redirect('verify_code')
-
-    return render(request, "sign/templates/code.html", {})
-
-
 def register_user(request):
     form = SignUpForm()
     if request.method == "POST":
         form = SignUpForm(request.POST)
         if form.is_valid():
             user = form.save()
-            code = ''.join(random.choices(digits, k=6))
-            one_time_code = OneTimeCode(user=user, code=code)  # Указываем пользователя при создании объекта
-            one_time_code.save()
+            code = ''.join(random.choices(string.digits, k=6))
             # Отправка почты с OTP-кодом
             send_mail(
                 subject='Код активации',
@@ -60,29 +44,28 @@ def register_user(request):
                 from_email=settings.DEFAULT_FROM_EMAIL,
                 recipient_list=[user.email],
             )
+            one_time_code = OneTimeCode(user=user, code=code)  # Указываем пользователя при создании объекта
+            one_time_code.save()
             username = form.cleaned_data['username']
             password = form.cleaned_data['password1']
             user = authenticate(username=username, password=password)
-
             messages.success(request, ("Код был отправлен на вашу почту."))
-            return redirect('code', user=user.username)
+            return redirect('code')
     return render(request, 'sign/templates/signup.html', {'form': form})
 
 
-class GetCode(CreateView):
-    template_name = 'sign/templates/code.html'
-    model = OneTimeCode
-    fields = ['code']
+def code(request):
+    if request.method == 'POST':
+        code = request.POST.get('code')
+        user = request.user
+        if OneTimeCode.objects.filter(user__username=user.username, code=code).exists():
+            # Если код верный, выполните необходимые действия
+            return redirect('home.html')
+        else:
+            # Если код неверный, выполните необходимые действия
+            return render(request, 'sign/templates/code.html', {'message': 'Неверный код'})
 
-    def get_queryset(self):
-        return OneTimeCode.objects.all()
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        name_user = self.kwargs.get('user')
-        if not OneTimeCode.objects.filter(user=User.objects.get(username=name_user)).exists():
-            context['message'] = "Код был отправлен на вашу почту."
-        return context
+    return render(request, 'sign/templates/code.html')
 
 
 class InvalidCode(CreateView):
