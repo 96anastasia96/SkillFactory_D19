@@ -75,6 +75,10 @@ class Code(CreateView):
         return redirect('login')
 
 
+class InvalidCode(CreateView):
+    template_name = 'sign/templates/invalid_code.html'
+
+
 def LogoutViewCustom(request):
         logout(request)
         messages.success(request, ("You Have Been Logged Out."))
