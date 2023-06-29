@@ -52,7 +52,7 @@ class Code(CreateView):
 
     def get_context_data(self, **kwargs):
         name_user = self.kwargs.get('user')
-        if not OneTimeCode.objects.filter(user_id=name_user).exists():
+        if not OneTimeCode.objects.filter(user=name_user).exists():
             code = ''.join(random.sample(hexdigits, 6))
             OneTimeCode.objects.create(user=name_user, code=code)
             user = User.objects.get(username=name_user)
@@ -68,14 +68,11 @@ class Code(CreateView):
         if 'code' in request.POST:
             user = request.path.split('/')[-1]
             if OneTimeCode.objects.filter(code=request.POST['code'], user=user).exists():
-                User.objects.filter(code=request.POST['code'], user=user).delete()
+                User.objects.filter(username=user).update(is_active=True)
+                OneTimeCode.objects.filter(code=request.POST['code'], user=user).delete()
             else:
                 return render(self.request, 'sign/templates/invalid_code.html')
         return redirect('login')
-
-
-class InvalidCode(CreateView):
-    template_name = 'sign/templates/invalid_code.html'
 
 
 def LogoutViewCustom(request):
