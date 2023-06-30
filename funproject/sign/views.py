@@ -33,7 +33,7 @@ def register_user(request):
         form = SignUpForm(request.POST)
         if form.is_valid():
             user = form.save()
-            user.is_active = False
+            # user.is_active = False
             user.save()
             code = ''.join(random.sample(hexdigits, 6))
             # Отправка почты с OTP-кодом
@@ -51,6 +51,7 @@ def register_user(request):
             login(request, user)
             messages.success(request, ("Код был отправлен на вашу почту."))
             return redirect('code')
+        return redirect('login')
     return render(request, 'sign/templates/signup.html', {'form': form})
 
 
