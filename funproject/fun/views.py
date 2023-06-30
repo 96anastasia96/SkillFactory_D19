@@ -13,6 +13,43 @@ from .models import Announcement, Comment, Profile
 
 # Create your views here.
 
+class MyResponsesView(ListView):
+    model = Comment
+    template_name = 'my_responses.html'
+    context_object_name = 'comments'
+
+    def get_queryset(self):
+        queryset = super().get_queryset().filter(announcement__author=self.request.user)
+
+        search = self.request.GET.get('search')
+        if search:
+            queryset = queryset.filter(text__contains=search)
+        return queryset
+
+
+
+def delete_comment(request, pk):
+    comment = get_object_or_404(Comment, pk=pk)
+    if comment.announcement.author == request.user:
+        comment.delete()
+        messages.success(request, 'Comment deleted successfully.')
+    else:
+        messages.error(request, 'You do not have permission to delete this comment.')
+    return redirect('my_responses')
+
+
+def accept_comment(request, pk):
+    comment = get_object_or_404(Comment, pk=pk)
+    if comment.announcement.author == request.user:
+        comment.is_accepted = True
+        comment.save()
+        messages.success(request, 'Comment accepted.')
+        # Send notification to commenter using preferred method (e.g., email)
+        # ...
+    else:
+        messages.error(request, 'You do not have permission to accept this comment.')
+    return redirect('my_responses')
+
 
 def home(request):
     return render(request, 'home.html', {})
