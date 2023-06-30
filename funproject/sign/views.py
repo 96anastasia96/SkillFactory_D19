@@ -8,7 +8,6 @@ from .models import OneTimeCode
 from django.shortcuts import render, redirect
 from .forms import SignUpForm
 from django.contrib.auth import authenticate, login, logout
-from django.contrib.auth import BACKEND_SESSION_KEY
 
 
 def login_view(request):
