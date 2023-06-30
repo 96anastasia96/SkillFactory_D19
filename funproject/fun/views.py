@@ -62,14 +62,14 @@ def accept_comment(request, pk):
         announcement = comment.announcement
         announcement.comments.add(comment)  # Add the comment to the announcement
         announcement.save()
+        comment.is_accepted = True  # Set the comment as accepted
+        comment.save()
         send_mail(
             subject='Действия с вашим откликом',
             message=f'Ваш отклик "{comment.content}" к "{comment.announcement.title}" был одобрен',
             from_email=settings.DEFAULT_FROM_EMAIL,
             recipient_list=[comment.user.email],
         )
-        comment.is_accepted = True  # Set the comment as accepted
-        comment.save()
         messages.success(request, 'Comment accepted and added to the announcement.')
     else:
         messages.error(request, 'You do not have permission to accept this comment.')
