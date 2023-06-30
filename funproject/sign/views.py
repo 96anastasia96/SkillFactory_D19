@@ -8,6 +8,7 @@ from .models import OneTimeCode
 from django.shortcuts import render, redirect
 from .forms import SignUpForm
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import BACKEND_SESSION_KEY
 
 
 def login_view(request):
@@ -33,6 +34,8 @@ def register_user(request):
         form = SignUpForm(request.POST)
         if form.is_valid():
             user = form.save()
+            user.is_active = False
+            user.save()
             code = ''.join(random.sample(hexdigits, 6))
             # Отправка почты с OTP-кодом
             send_mail(
@@ -46,6 +49,7 @@ def register_user(request):
             username = form.cleaned_data['username']
             password = form.cleaned_data['password1']
             user = authenticate(username=username, password=password)
+            login(request, user)
             messages.success(request, ("Код был отправлен на вашу почту."))
             return redirect('code')
     return render(request, 'sign/templates/signup.html', {'form': form})
@@ -63,7 +67,7 @@ def code(request):
             # Обновление аутентификации
             user = authenticate(username=user.username, password=user.password)
             login(request, user)
-            return redirect('login')
+            return redirect('home')
         else:
             return render(request, 'sign/templates/code.html', {'message': 'Неверный код'})
     return render(request, 'sign/templates/code.html')
