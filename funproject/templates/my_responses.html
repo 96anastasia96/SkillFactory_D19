@@ -4,16 +4,16 @@
   <h1>My Responses</h1>
 
   <div>
-  <form method="GET">
-    <input type="text" name="search" placeholder="Search by comment text">
-    <button type="submit">Filter</button>
-  </form>
-</div>
+    <form method="GET">
+      <input type="text" name="search" placeholder="Search by comment text">
+      <button type="submit">Filter</button>
+    </form>
+  </div>
 
   <ul>
     {% for comment in comments %}
       <li>
-        {{ comment.text }}
+        {{ comment.content }}
         <form action="{% url 'delete_comment' comment.pk %}" method="POST">
           {% csrf_token %}
           <button type="submit">Delete</button>

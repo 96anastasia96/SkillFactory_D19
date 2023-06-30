@@ -12,7 +12,7 @@ class Comment(models.Model):
     content = models.TextField()
 
     def __str__(self):
-        return self.user.username
+        return f'Comment by {self.user.username} on {self.announcement.title}'
 
 
 class Profile(models.Model):

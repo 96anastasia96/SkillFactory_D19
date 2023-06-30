@@ -27,6 +27,11 @@ class MyResponsesView(ListView):
         return queryset
 
 
+def my_responses(request):
+    user = request.user
+    comments = Comment.objects.filter(announcement__author=user)
+    return render(request, 'my_responses.html', {'comments': comments})
+
 
 def delete_comment(request, pk):
     comment = get_object_or_404(Comment, pk=pk)
