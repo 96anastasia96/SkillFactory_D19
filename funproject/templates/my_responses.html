@@ -17,19 +17,21 @@
 
   <ul>
     {% for comment in comments %}
-      <li>
-        Announcement: {{ comment.announcement.title }}
-        <br/>
-        Comment:{{ comment.content }}
-        <form action="{% url 'delete_comment' comment.id %}" method="POST">
-          {% csrf_token %}
-          <button type="submit">Delete</button>
-        </form>
-        <form action="{% url 'accept_comment' comment.id %}" method="POST">
-          {% csrf_token %}
-          <button type="submit">Accept</button>
-        </form>
-      </li>
+      {% if not comment.is_accepted %}
+        <li>
+          Announcement: {{ comment.announcement.title }}
+          <br/>
+          Comment: {{ comment.content }}
+          <form action="{% url 'delete_comment' comment.id %}" method="POST">
+            {% csrf_token %}
+            <button type="submit">Delete</button>
+          </form>
+          <form action="{% url 'accept_comment' comment.id %}" method="POST">
+            {% csrf_token %}
+            <button type="submit" >Accept</button>
+          </form>
+        </li>
+      {% endif %}
     {% endfor %}
   </ul>
 {% endblock %}

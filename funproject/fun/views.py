@@ -20,7 +20,6 @@ class MyResponsesView(ListView):
 
     def get_queryset(self):
         queryset = super().get_queryset().filter(announcement__author=self.request.user)
-
         announcement_id = self.request.GET.get('announcement')
         if announcement_id:
             queryset = queryset.filter(announcement_id=announcement_id)
@@ -29,7 +28,6 @@ class MyResponsesView(ListView):
 
 def my_responses(request):
     user = request.user
-
     if request.method == 'POST':
         if 'accept_comment' in request.POST:
             comment_id = request.POST.get('accept_comment')
@@ -61,9 +59,10 @@ def accept_comment(request, pk):
     if comment.announcement.author == request.user:
         announcement = comment.announcement
         announcement.comments.add(comment)  # Add the comment to the announcement
-        announcement.save()
         comment.is_accepted = True  # Set the comment as accepted
         comment.save()
+        announcement.save()
+
         send_mail(
             subject='Действия с вашим откликом',
             message=f'Ваш отклик "{comment.content}" к "{comment.announcement.title}" был одобрен',
