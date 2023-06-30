@@ -37,15 +37,17 @@
       <div class="col-lg-8 mx-auto">
         <!-- display comment-->
         {% for comment in object.comment_set.all %}
-        <div class="card p-2 mb-2">
-            <div class="card-body">
+          {% if comment.is_accepted %}
+            <div class="card p-2 mb-2">
+              <div class="card-body">
                 <h5 class="card-title">{{ comment.user.username }}</h5>
                 <p class="card-text">{{ comment.date }}</p>
                 <p class="card-text">{{ comment.content }}</p>
+              </div>
             </div>
-        </div>
+          {% endif %}
         {% empty %}
-        <p>No comments yet.</p>
+          <p>No accepted comments yet.</p>
         {% endfor %}
 
         <!--display the form-->
