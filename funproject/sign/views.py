@@ -61,12 +61,9 @@ def code(request):
         user = request.user
         if OneTimeCode.objects.filter(user__username=user.username, code=code).exists():
             # Проверка активации аккаунта
-            if not user.is_active:
-                user.is_active = True
-                user.save()
-            # Обновление аутентификации
-            user = authenticate(username=user.username, password=user.password)
-            login(request, user)
+            #if not user.is_active:
+            #    user.is_active = True
+            #    user.save()
             return redirect('home')
         else:
             return render(request, 'sign/templates/code.html', {'message': 'Неверный код'})
