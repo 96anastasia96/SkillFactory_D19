@@ -21,16 +21,29 @@ class MyResponsesView(ListView):
     def get_queryset(self):
         queryset = super().get_queryset().filter(announcement__author=self.request.user)
 
-        search = self.request.GET.get('search')
-        if search:
-            queryset = queryset.filter(text__contains=search)
+        announcement_id = self.request.GET.get('announcement')
+        if announcement_id:
+            queryset = queryset.filter(announcement_id=announcement_id)
         return queryset
 
 
 def my_responses(request):
     user = request.user
+
+    if request.method == 'POST':
+        if 'accept_comment' in request.POST:
+            comment_id = request.POST.get('accept_comment')
+            comment = Comment.objects.get(pk=comment_id)
+            comment.delete()  # Delete the comment from the database
+
+        if 'delete_comment' in request.POST:
+            comment_id = request.POST.get('delete_comment')
+            comment = Comment.objects.get(pk=comment_id)
+            comment.delete()  # Delete the comment from the database
+
     comments = Comment.objects.filter(announcement__author=user)
-    return render(request, 'my_responses.html', {'comments': comments})
+    announcements = Announcement.objects.filter(author=user)
+    return render(request, 'my_responses.html', {'comments': comments, 'announcements': announcements})
 
 
 def delete_comment(request, pk):
@@ -46,11 +59,16 @@ def delete_comment(request, pk):
 def accept_comment(request, pk):
     comment = get_object_or_404(Comment, pk=pk)
     if comment.announcement.author == request.user:
-        comment.is_accepted = True
-        comment.save()
-        messages.success(request, 'Comment accepted.')
-        # Send notification to commenter using preferred method (e.g., email)
-        # ...
+        announcement = comment.announcement
+        announcement.comments.add(comment)  # Add the comment to the announcement
+        announcement.save()
+        send_mail(
+            subject='Действия с вашим откликом',
+            message=f'Ваш отклик "{comment.content}" к "{comment.announcement.title}" был одобрен',
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            recipient_list=[comment.user.email],
+        )
+        messages.success(request, 'Comment accepted and added to the announcement.')
     else:
         messages.error(request, 'You do not have permission to accept this comment.')
     return redirect('my_responses')

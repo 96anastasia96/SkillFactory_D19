@@ -53,7 +53,6 @@ class Category(models.Model):
         return f'{self.name.title()}'
 
 
-
 class Announcement(models.Model):
     title = models.CharField(max_length=100)
     text = models.TextField()
@@ -63,6 +62,7 @@ class Announcement(models.Model):
     image = models.ImageField(upload_to='images/', null=True, blank=True)
     video = models.FileField(upload_to='videos/', null=True, blank=True)
     likes = models.ManyToManyField(User, related_name="ad_like", blank=True)
+    comments = models.ManyToManyField(Comment, related_name="commented_on", blank=True)
 
     def __str__(self):
         return f'{self.title.title()}: {self.text[:20]}'
