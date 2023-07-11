@@ -160,16 +160,16 @@ EMAIL_USE_TLS = False
 
 ADMINS = [
     # список всех админов в формате ('имя', 'их почта')
-    ('Anastasia', 'kissodessa@gmail.com'),
-    ('Anastasia2', 'ak96ak96@yandex.ru'),
+    ('********', '********'),
+    ('********', '********'),
 ]
 MANAGERS = [
     # список менеджеров
-    ('Anastasia3', 'su8scriber@yandex.ru'),
-    ('Anastasia4', 'su8scriber1@gmail.com'),
+    ('********', '********'),
+    ('********', '********'),
 ]
 
-SERVER_EMAIL = 'kissodessa@gmail.com'
+SERVER_EMAIL = '********'
 
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
