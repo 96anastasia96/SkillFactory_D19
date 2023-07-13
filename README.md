@@ -1,2 +1,4 @@
 # SkillFactory_D19
-Final project for SkillFactory
+Final project for SkillFactory Python Intensive 
+
+
